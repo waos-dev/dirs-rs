@@ -25,10 +25,16 @@ mod mac;
 #[cfg(any(target_os = "macos", target_os = "ios"))]
 use mac as sys;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 mod wasm;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 use wasm as sys;
+
+// WaOS: an app is a WASI component, with folders of its own.
+#[cfg(target_os = "wasi")]
+mod waos;
+#[cfg(target_os = "wasi")]
+use waos as sys;
 
 #[cfg(not(any(
     target_os = "windows",
